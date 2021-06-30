@@ -1,0 +1,367 @@
+---
+title: "HOSUN_R"
+output: html_document
+---
+---
+title: "Hosun_R"
+output: html_document
+---
+
+### 2020년 7월 26일  
+
+# apply 함수
+  
+* apply (input : array, output : array)  
+* lapply (input : list or vector, output : list)  
+* sapply (input : list or vector, output : vector or array)
+* vapply (input : list or vector, output : vector or array)  
+* tapply (input : list or vector and factor, output : vector or array)  
+* mapply (input : list or vector, output : vector or array)
+
+
+
+
+## apply 함수
+apply 계열 함수 중 가장 기본이 되는 함수로 행 또는 열 단위의 연산을 쉽게 할 수 있도록 지원하는 함수이다.
+
+apply(data, MARGIN = , function)에서 MARGIN = 1 : 행 단위 연산 / MARGIN = 2 : 열단위 연산 
+
+
+
+
+## 예시 데이터 만들기
+
+먼저, 예시 코드 작성을 위해 iris 데이터를 1~10행, 1~4열만 필터링 하고 랜덤으로 NA를 
+2개 만들어 넣은 iris_num 데이터를 만들었다.
+
+```{r}
+# iris 데이터 필터링
+iris_num <- iris[1:10, 1:4]
+
+# 랜덤으로 NA를 넣을 행/열 번호 뽑기
+set.seed(123)
+idx_r <- sample(1:10, 2)
+idx_c <- sample(1:4, 2)
+
+# NA 넣기
+for(i in 1:2){
+  iris_num[idx_r[i], idx_c[i]] <- NA
+}
+
+iris_num
+
+# summary는 데이터에 대한 요약 정보를 나타냄. (최소, 최대, 산술평균, 중앙값, 하한 & 상한 사분위수)
+summary(iris_num)
+
+```
+
+
+
+
+
+# mtcars자료를 이용해서 실습해보기.
+## 실습 1
+
+이 데이터는  1974년 Moter Trend US magazine에서 추출한 것으로 1973년, 1974년 모델의 32개 자동차들의 디자인과 성능을 비교한 것이다.
+
+mpg : Miles / gallon
+cyl : # of cylinders
+disp : Displacement
+hp : Gross horsepower
+drat : Rear axle ratio
+wt : Weight
+qsec : 1/4 mile time
+vs : V/S
+am : Transmission (0 = automatic, 1 = manual)
+gear : Number of forward gears
+carb : Number of carburetors
+
+
+```{r}
+head(mtcars)
+```
+
+Q) mtcars의 dimension은 어떻게 되는지 구하시오.
+
+```{r}
+
+
+
+```
+
+
+
+Q) mtcars 데이터의 mpg, cyl, disp, hp, wt을 가져오고 랜덤으로 NA를 4개 넣은 데이터셋의 이름을 mtcars_NA로 저장하시오.
+```{r}
+
+
+
+```
+
+---
+
+```{r}
+#iris_num의 행(row) 단위로 mean 연산
+apply(iris_num, 1, mean)
+
+#iris_num의 열(col) 단위로 mean 연산
+apply(iris_num, 2, mean)
+
+```
+
+위 코드의 경우 NA가 있는 행 또는 열은 mean 계산을 할 수 없기 때문에 일부 값이 NA로 출력되게 된다.
+
+iris_num에서 NA를 제거하고 계산하고자 하는 경우 mean 함수의 na.rm = T 인자를 이용하여 NA를 제거한 상태로 연산을 수행함.
+
+```{r}
+# 열 단위로 NA 제거하고 mean 연산
+apply(iris_num, 2, mean, na.rm = T)
+```
+
+# 열(col) 단위로 사용자 정의 함수 연산
+
+apply(iris_num, 2, function(x) {x * 2 + 1})
+
+```{r}
+apply(iris_num, 2, function(x) {x * 2 + 1})
+```
+
+iris_num의 각각의 열에 대해 median값 구하기
+
+```{r, eval=FALSE}
+apply(iris_num, 2, function(x) {median(x*2+1)}, na.rm = T)
+```
+Error in FUN(newX[, i], ...) : unused argument (na.rm = T)  
+
+  
+  
+na.rm = T는 apply의 인자가 아닌 median의 인자가 되어야 하므로 median 함수 안의 인자로 작성해야 한다.
+```{r}
+apply(iris_num, 2, function(x) {median(x*2+1, na.rm= T)})
+```
+  
+    
+---     
+      
+
+
+## 실습 2
+Q) mtcars_NA 데이터의 각 행별로 분산값을 구하값고 값이 30000 이상인 데이터만 출력하시오.  
+
+```{r, eval = FALSE}
+#A)
+#                     mpg cyl disp  hp    wt
+#Cadillac Fleetwood  10.4   8  472 205 5.250
+#Lincoln Continental 10.4   8  460 215 5.424
+#Chrysler Imperial   14.7   8  440 230 5.345
+```
+
+
+```{r}
+
+
+
+```
+
+Q) 위에서 출력한 데이터에 각 행별 분산값을 새로운 열 "var"의 값으로 넣어 열을 추가하시오.
+
+```{r}
+#A) 
+#                     mpg cyl disp  hp    wt      var
+#Cadillac Fleetwood  10.4   8  472 205 5.250 41706.66
+#Lincoln Continental 10.4   8  460 215 5.424 40088.90
+#Chrysler Imperial   14.7   8  440 230 5.345 37338.82
+```
+
+```{r}
+
+
+
+```
+
+
+Q) mtcars 데이터를 열별로 사용자 정의 함수 myfunc를 적용해라.
+문제를 풀 때 myfunc 함수를 만든 뒤 적용하시오.
+
+* myfunc : (x*2 - 4)를 y에 할당한 뒤, sum 과 length를 이용해 구한  y의 평균을 z에 할당한다.
+
+```{r}
+#A) 
+#       mpg        cyl       disp         hp       drat         wt       qsec 
+# 36.181250   8.375000 457.443750 289.375000   3.193125   2.434500  31.697500 
+#        vs         am       gear       carb 
+# -3.125000  -3.187500   3.375000   1.625000 
+```
+        
+        
+```{r}
+
+
+
+```
+
+---
+  
+# lapply
+* lapply = list + apply  : 실행결과가 list형태로 출력. 
+* apply 함수의 단점은 input으로 array만 입력할 수 있는데 vector, dataframe을 넣으려면 lapply 적용
+* lapply(data, function) 
+
+
+apply함수와 laspply 함수의 차이
+```{r}
+# iris_num의 열 단위 평균이 vector 형태로 출력됨
+apply(iris_num, 2, mean, na.rm = T)
+
+#iris_num의 열단위 평균이 list 형태로 출력됨
+result <- lapply(iris_num, mean, na.rm = T)
+result
+
+
+unlist(result) #vector로 바꾸고 싶으면 unlist
+```
+
+## 실습 3
+Q) mtcar 데이터의 열단위 분산을 list 형태로 출력한 것을 mtcar_list에 할당하시오.
+```{r}
+
+```
+
+
+Q) mtcar_list의 mpg와 wt값의 합을 구하시오.
+```{r}
+
+```
+
+
+---
+
+# sapply
+* sapply는 list 대신 행렬 or 벡터로 반환한다.
+* lapply는 list를 반환하므로 list를 다시 unlist하는 것이 번거롭다.
+
+```{r}
+y <- sapply(iris_num, function(x) {x>3})
+typeof(y)   #logical
+class(y)    #matrix
+y
+```
+
+
+## 실습4
+Q) mtcars 데이터의 1~5열 데이터를 열별로 사용자 함수 myfunc2를 적용한 값을 나타내시오.
+
+* myfunc : 열별로 평균을 구한것을 y에 할당하고 y가 20보다 큰지를 논리값(T/F)으로 출력.
+
+```{r}
+
+
+
+```
+
+
+
+
+---
+
+
+# vapply
+* FUN.VALUE argument에 output format을 명확히 정의해서 더 안전함.
+```{r}
+y1 <- vapply(iris_num, function(x) {x>3}, numeric(length(iris_num[,2])))
+y1
+
+y2 <- vapply(iris_num, function(x) {x>3}, logical(length(iris_num[,2])))
+y2
+```
+
+
+
+
+
+# tapply
+* tapply는 그룹별 처리를 위한 함수이다.
+* 그룹을 인자로 주고 (factor 형), 원소별 처리가 아니라 그룹별 처리를 함
+
+
+
+* iris 데이터에서 Species별로 Sepal.Width의 평균 구하기
+```{r}
+tapply(iris$Sepal.Width, iris$Species, mean)
+```
+
+
+## 실습 5
+Q) mtcars 데이터에서 gear 갯수별로 mpg의 평균을 구하시오. 
+```{r}
+
+```
+
+
+
+Q) 위의 결과값에서 그 평균이 20 이하인 gear 그룹의 hp 분산을 구하시오.
+```{r}
+
+```
+
+
+# aggregate 함수
+* 데이터의 그룹별로 특정한 열에 함수를 적용할 때 사용
+* aggregate(data, 
+            by = list(new_var = data$col),
+            FUN = ,
+            na.rm = TRUE)
+
+```{r}
+# iris 데이터의 Species별로 Sepal.Length와 Sepal.Width의 평균을 구하기
+aggregate(iris[c(1,2)],
+               by = list(Group = iris$Species),
+               mean)
+```
+
+
+## 실습6
+Q) mtcars 데이터를 carb별로 cyl, wt, qsec의 분산을 구하시오.
+```{r}
+
+
+
+```
+
+            
+
+---
+
+# 과제
+MASS 패키지 안에 있는 Cars93 데이터를 이용해 다음을 구하시오.
+
+Q) Make 별로 (제조사 별로) MPG.highway와 Horsepower가 각각 평균 이상의 값을 가지는 Make는 무엇인가?
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

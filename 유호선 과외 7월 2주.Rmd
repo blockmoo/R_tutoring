@@ -1,0 +1,337 @@
+---
+title: "Hosun  7월 2주 과제"
+output: html_document
+---
+
+
+# if문
+
+if (logical expression) {
+    statements
+}
+else {
+    alternative statements
+}
+만약 logical expression이 참일 때는 statements 문이 실행된다. 반대로 거짓일때는 alternative statements가 실행된다.
+
+
+### if문 예제
+a > 5이고 b > 5이면 a+b를 출력하는 if문을 만드시오.
+(a = 10, b = 20)
+
+```{r}
+a <- 10
+b <- 20
+if(a > 5 & b > 5) {
+  print(a+b)
+}
+```
+
+### if문 예제
+a > 10이거나 b < 20이면 a*b를 출력하는 if문을 만드시오.
+(a = 10, b = 15)
+```{r}
+a <- 10
+b <- 15
+
+if(a > 10 | b < 20) {
+  print(a*b)
+}
+```
+
+
+### else if문 예제
+1. 조건1을 만족하면 결과1을 출력하고 그렇지 않으면 결과2를 출력하시오.  
+    - if(조건1){결과1} else {결과2}
+
+2. 조건1을 만족하면 결과1을 출력하고 조건2를 만족하면 결과2를, 그것도 아니면 결과3을 출력하시오.
+    - if(조건1){결과1} else if (조건2){결과2} else {결과3}
+
+
+a 가 5보다 작으면 'a'를 출력하고 5 이상 10 미만이면 'b'를 출력, 10이상이면 'c'를 출력하는 if문을 작성하시오.
+(a = 12)
+
+```{r}
+a <- 12
+
+if(a < 5) {
+  print("a")
+}else if (5 <= a & a < 10){
+  print("b")
+}else {
+  print("c")
+}
+```
+
+
+## 실습1
+a가 3보다 크면 '3보다 큰 수'를 출력하고 3과 같으면 '3'을 출력하고 3보다 작으면 '3보다 작은 수'를 출력하는 if문을 작성하시오.
+```{r}
+a <- 2
+if(a > 3) {
+  print("3보다 큰수")
+}else if (a == 3) {
+  print("3")
+}else {
+  print("3보다 작은 수")
+}
+
+```
+
+## ifelse 예제
+: 실행 명령이 하나일 경우 ifelse 사용
+ifelse( 조건, 참ㄸ때 결과, 거짓일 때 결과)
+```{r}
+a <- 10
+b <- 20
+ifelse (a>b, c <- a, c <- b)
+c
+```
+
+
+
+
+## 실습2
+MASS 패키지 안에 있는 데이터 "Animals"를 이용해 다음을 구하시오.
+- Animals 데이터를 열에 대한 plot을 구해서 데이터의 분포를 확인하시오.
+
+Q) Animals의 body의 평균을 구해서 평균보다 큰 body를 가질 경우 
+새로운 열 "G_body"의 값에 "big"을 넣고, 평균과 같으면 "mean", 평균보다 작으면 "small"을 넣어라.
+
+Q) Animals의 brain의 평균을 구해서 평균보다 큰 brain를 가질 경우 
+새로운 열 "G_brain"의 값에 "big"을 넣고, 평균과 같으면 "mean", 평균보다 작으면 "small"을 넣어라.  (for, if문을 이용해서 작성하시오.)
+```{r}
+library(MASS)
+head(Animals)
+
+plot(Animals$body)
+plot(Animals$brain)
+
+Mean <- apply(Animals, 2, mean)
+
+for(i in 1:nrow(Animals)){
+ if(Animals$body[i] > Mean[1]) {
+   Animals$G_body[i] <- "big"
+ }else if(Animals$body[i] == Mean[1]) {
+   Animals$G_body[i] <- "mean"
+ }else {
+   Animals$G_body[i] <- "small"
+ }
+}
+
+head(Animals)
+```
+
+
+
+
+# 반복문 활용하기 : for문, while문
+* for문 : 입력된 벡터의 길이만큼 반복
+* while문 : 조건에 따라 반복 -> 반복 횟수를 정확히 모를 떄 사용하면 편리함.
+    - 실행 반복 횟수가 정확하게 사전에 예측되고 정해지면 for문
+    - 계산 결과에 따라 반복해야 되는 횟수 등에 변동있을 때는 while문
+
+
+
+
+## for문
+for ( i in 벡터) {
+  i(원소)를 활용한 실행 구문
+}
+
+
+### 예제
+
+for구문을 활용한 간단한 예제 (누적합 계산)
+- 1 ~ 10의 누적합을 구하시오.
+- 1 ~ 10의 합을 구하시오.
+```{r}
+# 누적합
+cumsum <- 0 #cumsum의 초기값 지정
+for ( i in 1: 10) {
+  cumsum <- cumsum + i
+  print(cumsum)
+}
+
+# 합
+sum <- 0
+for ( i in 1:10) {
+  sum <- sum + i
+}
+sum
+```
+
+
+## 실습3
+구구단 6단 구하기
+```{r}
+for(i in 1:10) {
+  cat("6 * ",i,"=",2*i, "\n")
+}
+```
+
+
+
+## +)  cat 함수
+cat(a,b) 의 결과 : ab
+문자나 벡처를 연결해서 출력할 떄 cat 사용
+cat() 함수에는 sep= 옵션있다.  각 값들을 연결할 때 구분자를 sep에 지정하면 됨.
+cat함수는 default는 줄바꿈을 하지 않음.
+줄바꿈을 하고 싶으면 옵션을 추가해준다.
+
+ex) 
+```{r}
+x <- 1:5
+y <- c("a","b","c", "d")
+cat(x, y, sep="-")
+
+cat(x,y,"\n")
+
+```
+
+
+# 실습4
+Q) 짝수와 홀수 조건 별 데이터 값 구하기 
+101 ~ 200을값으로 가지는 벡터 v1이있다.
+짝수이면 2를 곱하고 홀수이면 2를 더해서 출력하는 for문을 구하시오.
+```{r}
+v1 <- 101:200
+for(i in 1:length(v1)) {
+  if(v1[i] %% 2 == 0) {
+    print(v1[i] *2)
+  }else {
+    print(v1[i] +2)
+  }
+}
+```
+
+
+## 실습5
+Q) iris 데이터셋에서 Sepal.Length가 5.0 ~ 6.0 사이인 행들만 골라서 
+Sepal.Length, Sepal.Width의 값을 보이시오.
+
+1) for문을 이용
+```{r}
+idx <- c()  #변수 정의 필수!! 
+for( i in 1:nrow(iris)) {
+  if(iris[i, "Sepal.Length"] >= 5.0 &
+     iris[i, "Sepal.Length"] <= 6.0){
+    idx <- c(idx,i)
+     }
+}
+idx
+iris[idx, c("Sepal.Length", "Sepal.Width")]
+
+```
+
+
+2)subset을 이용
+```{r}
+subset(iris,Sepal.Length >= 5.0 &
+         Sepal.Length <= 6.0)[,1:2]
+```
+
+
+
+
+# while 문
+주어진 조건에 따라서 반복함.
+
+기본 형태 :
+while (조건문) {
+  조건문의 반환값이 TRUE일때, 수행할 실행구문
+}
+
+
+### 예제
+```{r}
+i <- 0  # 초기값 지정
+while(i <= 10) {
+  print(i)
+  i = i + 1  # i 값을 갱신해준다.
+}
+```
+
+
+while 문에서 next를 사용해 짝수만 출력해보자.   
+
+값이 짝수인지 확인하는데는 나머지 연산자 %%를 사용했다.
+
+- 0 부터 10까지의 숫자 중에서 짝수만 출력하시오.
+```{r}
+i <- 0
+while (i <= 9) {
+  i <- i +1
+  if ( i %% 2 != 0 ) {
+    next  # print()를 실행하지 않고 while 문의 처음으로 감
+  }
+  print(i)
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

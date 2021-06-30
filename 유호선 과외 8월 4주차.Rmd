@@ -1,0 +1,89 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(dplyr)
+
+# 1. species별로 sepal.length, petal.length의 평균을 구하시오. (dplyr 패키지 이용)
+
+iris %>%
+  group_by(Species) %>%
+  summarise_at(vars(Sepal.Length, Petal.Length),mean)
+
+mtcars %>%
+  group_by(gear) %>%
+  summarise_at(vars(wt, hp),  funs(mean=mean(., na.rm=T), max=max(., na.rm=T)))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
